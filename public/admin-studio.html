@@ -96,15 +96,25 @@
                     })
                 });
 
+                // 4. 응답 상태 확인
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
                     alert("🚀 MealMate Shop에 성공적으로 배포되었습니다!");
+                    // 입력창 초기화
+                    document.getElementById('recipe-title').value = "초간단 10분 김치찜";
+                    document.getElementById('ingredients-text').value = "돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술";
                 } else {
-                    alert("배포 실패: " + result.error);
+                    alert("배포 실패: " + (result.error || "알 수 없는 오류"));
                 }
             } catch (err) {
-                alert("서버 연결 오류가 발생했습니다.");
+                console.error("배포 오류:", err);
+                alert("배포 중 오류가 발생했습니다.\n" + err.message);
             } finally {
                 publishBtn.innerText = "MealMate Shop에 최종 배포";
                 publishBtn.disabled = false;
