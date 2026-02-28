@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>MealMate Admin - AI Recipe Processor</title>
+    <style>
+        body { background: #0f0f0f; color: #e0e0e0; font-family: sans-serif; display: flex; margin: 0; }
+        .sidebar { width: 220px; background: #1a1a1a; height: 100vh; padding: 20px; border-right: 1px solid #333; }
+        .main { flex: 1; padding: 40px; }
+        .card { background: #1e1e1e; padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 8px; margin-bottom: 15px; }
+        .btn-ai { background: linear-gradient(45deg, #ff6b6b, #ff4757); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .status-tag { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; background: #2f3542; color: #747d8c; margin-right: 10px; }
+        .status-tag.active { background: #2ed573; color: white; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>MealMate Admin</h3>
+        <p>🎬 영상 자동 가공</p>
+        <p>📦 재료 매칭 관리</p>
+        <p>📊 배포 대시보드</p>
+    </div>
+
+    <div class="main">
+        <h1>AI 레시피 엔진 🪄</h1>
+        
+        <div class="card">
+            <h3>🔗 외부 영상 소스 입력</h3>
+            <input type="text" id="sourceUrl" placeholder="Instagram Reels 또는 Shorts URL을 붙여넣으세요">
+            <button class="btn-ai" onclick="startAIProcessing()">AI 가공 및 레시피 추출 시작</button>
+        </div>
+
+        <div id="processingResult" style="display:none;">
+            <div class="card">
+                <h3>🔍 AI 분석 결과 (자동 추출됨)</h3>
+                <div style="margin-bottom: 15px;">
+                    <span class="status-tag active">저작권 세탁 완료</span>
+                    <span class="status-tag active">나레이션 생성 완료</span>
+                    <span class="status-tag">쇼핑몰 상품 매칭 중...</span>
+                </div>
+                
+                <label>요리 제목</label>
+                <input type="text" value="초간단 10분 김치찜">
+                
+                <label>추출된 재료 (쇼핑몰 연동용)</label>
+                <textarea rows="4">돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술</textarea>
+                
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1; background: #000; height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        원본 미리보기
+                    </div>
+                    <div style="flex: 1; background: #000; height: 200px; border-radius: 10px; border: 2px solid #ff6b6b; display: flex; align-items: center; justify-content: center;">
+                        MealMate 가공본
+                    </div>
+                </div>
+                
+                <button class="btn-ai" style="margin-top: 20px; width: 100%;">MealMate Shop에 최종 배포</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startAIProcessing() {
+            const result = document.getElementById('processingResult');
+            result.style.display = 'block';
+            // 실제 구현 시에는 fetch()를 통해 Backend(Node.js/Python) AI API를 호출합니다.
+        }
+    </script>
+</body>
+</html>

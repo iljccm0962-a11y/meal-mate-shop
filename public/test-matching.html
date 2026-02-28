@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MealMate - 재료 매칭 시스템 테스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .card label {
+            display: block;
+            margin: 15px 0 5px 0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card input,
+        .card textarea,
+        .card select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .card button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .card button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
+        .result-item strong {
+            color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #c33;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #3c3;
+        }
+
+        .grid-2 {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            font-size: 1.3em;
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+
+        .mall {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🛒 MealMate Shop</h1>
+            <p>AI가 추출한 재료를 쇼핑몰 최저가와 자동 연결</p>
+        </header>
+
+        <div class="content">
+            <!-- 기본 재료 매칭 -->
+            <div class="card">
+                <h2>📋 재료 매칭</h2>
+                <label>재료명 (쉼표로 구분)</label>
+                <textarea 
+                    id="ingredientList" 
+                    placeholder="예: 계란, 우유, 밀가루&#10;한 줄에 하나씩 입력하세요"
+                    rows="4">계란
+우유
+밀가루</textarea>
+                <button onclick="testBasicMatching()">🔍 재료 매칭 시작</button>
+                <div id="matchingResults" class="results"></div>
+            </div>
+
+            <!-- 쇼핑몰 비교 -->
+            <div class="card">
+                <h2>🏪 쇼핑몰 비교</h2>
+                <label>재료명</label>
+                <input 
+                    type="text" 
+                    id="compareIngredient" 
+                    placeholder="예: 계란"
+                    value="계란">
+                <button onclick="testCompareMalls()">⚖️ 가격 비교</button>
+                <div id="compareResults" class="results"></div>
+            </div>
+
+            <!-- 요리 기반 매칭 -->
+            <div class="card">
+                <h2>🍳 요리 선택</h2>
+                <label>요리 ID</label>
+                <input 
+                    type="text" 
+                    id="recipeId" 
+                    placeholder="예: recipe_001"
+                    value="recipe_breakfast">
+                <button onclick="testRecipeMatching()">👨‍🍳 요리 재료 자동 매칭</button>
+                <div id="recipeResults" class="results"></div>
+            </div>
+
+            <!-- 장바구니 -->
+            <div class="card">
+                <h2>🛍️ 장바구니 추가</h2>
+                <label>사용자 ID</label>
+                <input 
+                    type="text" 
+                    id="userId" 
+                    placeholder="사용자 ID"
+                    value="user_test_123">
+                <button onclick="testAddToCart()">📦 장바구니에 추가</button>
+                <div id="cartResults" class="results"></div>
+            </div>
+
+            <!-- 통합 워크플로우 -->
+            <div class="card grid-2">
+                <h2>🚀 통합 워크플로우</h2>
+                <p>AI가 추출한 재료 → 쇼핑몰 검색 → 장바구니 추가까지 한 번에!</p>
+                <label>사용자 ID</label>
+                <input 
+                    type="text" 
+                    id="workflowUserId" 
+                    placeholder="사용자 ID"
+                    value="user_workflow_123">
+                <label>요리 ID</label>
+                <input 
+                    type="text" 
+                    id="workflowRecipeId" 
+                    placeholder="요리 ID"
+                    value="recipe_001">
+                <button onclick="testCompleteWorkflow()">⚡ 전체 워크플로우 실행</button>
+                <div id="workflowResults" class="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 시스템 스크립트 -->
+    <script src="js/database.js"></script>
+    <script src="js/shopping-api.js"></script>
+    <script src="js/ingredient-matcher.js"></script>
+    <script src="js/examples.js"></script>
+
+    <script>
+        // 테스트 함수들
+        
+        async function testBasicMatching() {
+            const input = document.getElementById('ingredientList').value;
+            const resultsDiv = document.getElementById('matchingResults');
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ 재료를 검색 중입니다...</div>';
+            
+            try {
+                const ingredients = input.split('\n')
+                    .map(s => s.trim())
+                    .filter(s => s)
+                    .map(name => ({ name, quantity: '1개' }));
+
+                // 데모용: 실제 API 호출 대신 샘플 데이터 반환
+                const results = await mockMatchGroceryToMall(ingredients);
+
+                let html = '';
+                results.forEach(item => {
+                    html += `
+                        <div class="result-item">
+                            <strong>${item.name}</strong> (${item.quantity})<br>
+                            <span class="price">${item.bestPrice.toLocaleString()}원</span>
+                            <span class="mall">${item.mallName}</span><br>
+                            <small>할인율: ${item.discountPercent}% | 배송료: ${item.deliveryFee}원</small>
+                        </div>
+                    `;
+                });
+
+                const total = results.reduce((sum, item) => sum + item.totalPrice, 0);
+                html += `<div class="success">✓ 총액: <strong>${total.toLocaleString()}원</strong></div>`;
+
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 오류: ${error.message}</div>`;
+            }
+        }
+
+        async function testCompareMalls() {
+            const ingredient = document.getElementById('compareIngredient').value;
+            const resultsDiv = document.getElementById('compareResults');
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ 각 쇼핑몰에서 검색 중입니다...</div>';
+            
+            try {
+                const comparison = await mockCompareMultipleMalls(ingredient);
+
+                let html = `
+                    <div class="result-item">
+                        <strong>최저가</strong><br>
+                        <span class="price">${comparison.lowest.toLocaleString()}원</span>
+                        <span class="mall">${comparison.mall}</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>📊 다른 쇼핑몰 가격</strong><br>
+                `;
+
+                comparison.alternatives.forEach((alt, idx) => {
+                    html += `${idx + 1}. ${alt.mallName}: <span class="price">${alt.price.toLocaleString()}원</span><br>`;
+                });
+
+                html += '</div>';
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 오류: ${error.message}</div>`;
+            }
+        }
+
+        async function testRecipeMatching() {
+            const recipeId = document.getElementById('recipeId').value;
+            const resultsDiv = document.getElementById('recipeResults');
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ 요리의 재료를 검색 중입니다...</div>';
+            
+            try {
+                const results = await mockMatchRecipeIngredients(recipeId);
+
+                let html = `<div class="success">✓ ${recipeId}: ${results.length}개 재료 검색 완료</div>`;
+                
+                results.forEach(item => {
+                    html += `
+                        <div class="result-item">
+                            <strong>${item.name}</strong><br>
+                            <span class="price">${item.bestPrice.toLocaleString()}원</span>
+                            <span class="mall">${item.mallName}</span>
+                        </div>
+                    `;
+                });
+
+                const total = results.reduce((sum, item) => sum + item.totalPrice, 0);
+                html = `<div style="background: #e3f2fd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                    📊 총액: <strong>${total.toLocaleString()}원</strong><br>
+                    평균: <strong>${Math.round(total / results.length).toLocaleString()}원</strong>
+                </div>` + html;
+
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 오류: ${error.message}</div>`;
+            }
+        }
+
+        async function testAddToCart() {
+            const userId = document.getElementById('userId').value;
+            const resultsDiv = document.getElementById('cartResults');
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ 장바구니에 추가 중입니다...</div>';
+            
+            try {
+                const ingredients = [
+                    { name: '계란', quantity: '10개' },
+                    { name: '우유', quantity: '1L' }
+                ];
+
+                const matchedItems = await mockMatchGroceryToMall(ingredients);
+                const cartResult = await mockAddToCart(matchedItems, userId);
+
+                const html = `
+                    <div class="success">✓ 장바구니에 추가되었습니다!</div>
+                    <div class="result-item">
+                        <strong>장바구니 ID</strong><br>
+                        ${cartResult.cartId}
+                    </div>
+                    <div class="result-item">
+                        <strong>추가된 상품</strong><br>
+                        ${cartResult.itemCount}개
+                    </div>
+                    <div class="result-item">
+                        <strong>총액</strong><br>
+                        <span class="price">${cartResult.totalPrice.toLocaleString()}원</span>
+                    </div>
+                `;
+
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 오류: ${error.message}</div>`;
+            }
+        }
+
+        async function testCompleteWorkflow() {
+            const userId = document.getElementById('workflowUserId').value;
+            const recipeId = document.getElementById('workflowRecipeId').value;
+            const resultsDiv = document.getElementById('workflowResults');
+            
+            resultsDiv.innerHTML = '<div class="loading">🚀 워크플로우 실행 중...</div>';
+            
+            try {
+                let html = '<div class="success">✓ 워크플로우 진행 중...</div>';
+
+                // STEP 1
+                html += '<div class="result-item"><strong>STEP 1: 요리 재료 검색</strong></div>';
+                const ingredients = await mockMatchRecipeIngredients(recipeId);
+                html += `<div class="result-item">→ ${ingredients.length}개 재료 검색 완료</div>`;
+
+                // STEP 2
+                html += '<div class="result-item"><strong>STEP 2: 최저가 검색</strong></div>';
+                const matched = await mockMatchGroceryToMall(ingredients.map(i => ({ name: i.name })));
+                const total = matched.reduce((sum, item) => sum + item.totalPrice, 0);
+                html += `<div class="result-item">→ 총액: ${total.toLocaleString()}원</div>`;
+
+                // STEP 3
+                html += '<div class="result-item"><strong>STEP 3: 장바구니 추가</strong></div>';
+                const cartResult = await mockAddToCart(matched, userId);
+                html += `<div class="result-item">→ 장바구니 ID: ${cartResult.cartId}</div>`;
+
+                // 최종 결과
+                html += `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <strong>✅ 워크플로우 완료!</strong><br>
+                        재료: ${matched.length}개<br>
+                        총액: <span class="price">${total.toLocaleString()}원</span><br>
+                        다음: 쇠팡 또는 네이버 쇼핑으로 이동하여 결제
+                    </div>
+                `;
+
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 오류: ${error.message}</div>`;
+            }
+        }
+
+        // 모의 함수 (데모용)
+        async function mockMatchGroceryToMall(ingredients) {
+            // 실제 환경에서는 실제 API 호출
+            // const results = await ingredientMatcher.matchGroceryToMall(ingredients);
+            
+            // 데모용 샘플 데이터
+            const malls = ['쿠팡', '네이버 쇼핑', '위메프'];
+            const basePrices = { '계란': 4500, '우유': 3200, '밀가루': 2800, '버터': 5000, '토마토': 2000, '양파': 1500, '마늘': 800 };
+            
+            return ingredients.map(ing => ({
+                id: `match_${Date.now()}_${Math.random()}`,
+                name: ing.name,
+                quantity: ing.quantity || '1개',
+                bestPrice: (basePrices[ing.name] || 3000) - Math.floor(Math.random() * 500),
+                originalPrice: basePrices[ing.name] || 3000,
+                discountPercent: Math.floor(Math.random() * 20),
+                mallName: malls[Math.floor(Math.random() * malls.length)],
+                deliveryFee: Math.random() > 0.7 ? 2500 : 0,
+                totalPrice: 0,
+                rating: (3 + Math.random() * 2).toFixed(1),
+                reviews: Math.floor(Math.random() * 500),
+                inStock: true
+            })).map(item => ({
+                ...item,
+                totalPrice: item.bestPrice + item.deliveryFee
+            }));
+        }
+
+        async function mockCompareMultipleMalls(ingredientName) {
+            const basePrices = { '계란': 4500, '우유': 3200, '밀가루': 2800 };
+            const basePrice = basePrices[ingredientName] || 3000;
+            const malls = [
+                { mallName: '쿠팡', price: basePrice - 200 },
+                { mallName: '네이버 쇼핑', price: basePrice - 100 },
+                { mallName: '위메프', price: basePrice + 300 }
+            ];
+
+            return {
+                lowest: basePrice - 200,
+                mall: '쿠팡',
+                link: 'https://www.coupang.com/vp/products/...',
+                alternatives: malls
+            };
+        }
+
+        async function mockMatchRecipeIngredients(recipeId) {
+            const recipes = {
+                recipe_breakfast: [
+                    { name: '계란', quantity: '3개' },
+                    { name: '우유', quantity: '200ml' },
+                    { name: '버터', quantity: '20g' }
+                ],
+                recipe_001: [
+                    { name: '토마토', quantity: '500g' },
+                    { name: '양파', quantity: '200g' },
+                    { name: '마늘', quantity: '50g' }
+                ]
+            };
+
+            const ingredients = recipes[recipeId] || recipes.recipe_breakfast;
+            return mockMatchGroceryToMall(ingredients);
+        }
+
+        async function mockAddToCart(items, userId) {
+            const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
+            return {
+                success: true,
+                cartId: `cart_${Date.now()}`,
+                itemCount: items.length,
+                totalPrice: total
+            };
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', () => {
+            console.log('🎯 MealMate 재료 매칭 시스템 테스트 페이지 로드됨');
+            console.log('위의 버튼을 클릭하여 각 함수를 테스트하세요!');
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MealMate Shop - 스마트 장바구니</title>
+    <style>
+        :root { --main: #FF6B6B; --bg: #121212; --card: #1E1E1E; }
+        body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: white; }
+        
+        header { padding: 20px; background: var(--card); border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 10; }
+        .search-wrapper { display: flex; gap: 10px; margin-top: 15px; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: #2a2a2a; color: white; }
+        button { background: var(--main); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; }
+
+        .content { padding: 20px; }
+        .section-title { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        /* 가격 비교 카드 */
+        .price-card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; }
+        .mall-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
+        .mall-row:last-child { border-bottom: none; }
+        .best-price { color: var(--main); font-weight: 800; font-size: 18px; }
+
+        /* 레시피 쇼츠 추천 영역 */
+        .shorts-tray { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .short-item { min-width: 140px; height: 200px; background: #333; border-radius: 12px; display: flex; align-items: flex-end; padding: 10px; font-size: 12px; font-weight: bold; background-size: cover; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: 900; font-size: 20px;">MEALMATE SHOP</div>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="재료를 검색하세요 (예: 삼겹살)">
+            <button onclick="searchAI()">비교</button>
+        </div>
+    </header>
+
+    <div class="content">
+        <div id="resultArea" style="display:none;">
+            <div class="section-title">📉 실시간 가격 비교 결과</div>
+            <div class="price-card">
+                <div style="margin-bottom: 15px; font-weight: bold;">"대패 삼겹살 500g" 최저가 현황</div>
+                <div class="mall-row">
+                    <span>쿠팡 (로켓배송)</span>
+                    <span class="best-price">12,500원</span>
+                </div>
+                <div class="mall-row">
+                    <span>이마트몰 (쓱배송)</span>
+                    <span>13,200원</span>
+                </div>
+                <div class="mall-row">
+                    <span>네이버 최저가</span>
+                    <span>12,800원</span>
+                </div>
+                <button style="width:100%; margin-top:15px;">최저가 묶음 배송으로 담기</button>
+            </div>
+        </div>
+
+        <div class="section-title">📺 담은 재료로 만드는 1분 레시피</div>
+        <div class="shorts-tray">
+            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe1')">삼겹살 김치찜</div>
+            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe2')">제육볶음 황금레시피</div>
+            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe3')">고기 된장찌개</div>
+        </div>
+    </div>
+
+    <script>
+        function searchAI() {
+            // 실제 데이터 연동 시 API 호출 로직이 들어갈 자리입니다.
+            document.getElementById('resultArea').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
