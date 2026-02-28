@@ -58,19 +58,101 @@
             </div>
         </div>
 
-        <div class="section-title">📺 담은 재료로 만드는 1분 레시피</div>
-        <div class="shorts-tray">
-            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe1')">삼겹살 김치찜</div>
-            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe2')">제육볶음 황금레시피</div>
-            <div class="short-item" style="background-image: url('https://via.placeholder.com/140x200/333/fff?text=Recipe3')">고기 된장찌개</div>
+        <div class="section-title">🍽️ MealMate Only - kfood 레시피</div>
+        <div id="recipe-feed" class="max-w-md mx-auto px-4">
+          <p class="text-center py-10 text-gray-400">데이터를 불러오는 중입니다...</p>
         </div>
     </div>
 
     <script>
-        function searchAI() {
-            // 실제 데이터 연동 시 API 호출 로직이 들어갈 자리입니다.
-            document.getElementById('resultArea').style.display = 'block';
+      /**
+       * 1. 데이터베이스(D1)에서 레시피를 가져오는 함수
+       */
+      async function loadMealMateRecipes() {
+        // 레시피가 그려질 구역 (id="recipe-feed")
+        const feedContainer = document.getElementById('recipe-feed');
+        if (!feedContainer) return;
+
+        try {
+          // 우리가 만든 API 통로(/api/recipes)에 데이터를 요청합니다.
+          const response = await fetch('/api/recipes');
+          const recipes = await response.json();
+
+          // 데이터가 없을 때 표시할 문구
+          if (!recipes || recipes.length === 0) {
+            feedContainer.innerHTML = `
+              <div class="text-center py-20 text-gray-400">
+                <p>아직 등록된 kfood 레시피가 없습니다.</p>
+                <p class="text-sm">관리자 페이지에서 레시피를 추가해 주세요!</p>
+              </div>`;
+            return;
+          }
+
+          /**
+           * 2. 데이터를 HTML 카드 형태로 변환하여 화면에 뿌려줍니다.
+           */
+          feedContainer.innerHTML = recipes.map(item => `
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6 transition-all active:scale-[0.98]">
+              <div class="p-6">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">MealMate Only</span>
+                  <span class="text-gray-300 text-[10px]">No. ${item.id}</span>
+                </div>
+                
+                <h3 class="text-xl font-black text-gray-900 mb-2 leading-tight">${item.title}</h3>
+                <p class="text-gray-500 text-sm mb-4 line-clamp-2 font-medium">${item.ingredients}</p>
+                
+                <div class="flex justify-between items-end pt-4 border-t border-dashed border-gray-100">
+                  <div>
+                    <p class="text-[10px] text-gray-400 line-through mb-0.5">정상가 12,000원</p>
+                    <p class="text-lg font-black text-red-500">8,900원 <span class="text-xs font-medium text-red-400">품절임박</span></p>
+                  </div>
+                  <button onclick="addToCart('${item.title}')" class="bg-black text-white px-6 py-3 rounded-2xl text-sm font-extrabold hover:bg-gray-800 transition">
+                    재료담기
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+        } catch (err) {
+          console.error('MealMate Load Error:', err);
+          feedContainer.innerHTML = '<p class="text-center py-10 text-red-400 font-bold">데이터 연결에 실패했습니다.</p>';
         }
+      }
+
+      // 장바구니 담기 클릭 시 실행될 알림
+      function addToCart(name) {
+        alert('🛒 [' + name + '] 재료 세트가 장바구니에 담겼습니다!');
+      }
+
+      // 검색 기능
+      function searchAI() {
+        const searchInput = document.getElementById('searchInput').value;
+        
+        if (!searchInput.trim()) {
+            alert('재료를 입력해주세요');
+            return;
+        }
+        
+        // 실제 데이터 연동 시 API 호출 로직
+        document.getElementById('resultArea').style.display = 'block';
+      }
+
+      // 페이지가 로드되면 즉시 실행
+      document.addEventListener('DOMContentLoaded', () => {
+        loadMealMateRecipes();
+        
+        // 엔터 키로 검색
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              searchAI();
+            }
+          });
+        }
+      });
     </script>
 </body>
 </html>

@@ -13,6 +13,58 @@ const corsHeaders = {
 };
 
 /**
+ * GET 요청 처리 - 레시피 조회
+ */
+export async function onRequestGet(context) {
+    const { env, request } = context;
+    
+    try {
+        const url = new URL(request.url);
+        const recipeId = url.searchParams.get('id');
+
+        if (recipeId) {
+            // 특정 레시피 조회
+            const recipe = await env.DB.prepare(
+                "SELECT * FROM recipes WHERE id = ?"
+            ).bind(parseInt(recipeId)).first();
+
+            if (!recipe) {
+                return new Response(JSON.stringify({ error: "레시피를 찾을 수 없습니다" }), {
+                    status: 404,
+                    headers: { ...corsHeaders, "Content-Type": "application/json" }
+                });
+            }
+
+            // 해당 레시피의 재료 조회
+            const ingredients = await env.DB.prepare(
+                "SELECT * FROM ingredients WHERE recipe_id = ?"
+            ).bind(parseInt(recipeId)).all();
+
+            return new Response(JSON.stringify({ 
+                ...recipe, 
+                ingredients: ingredients.results 
+            }), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+        } else {
+            // 전체 레시피 조회
+            const recipes = await env.DB.prepare(
+                "SELECT * FROM recipes LIMIT 100"
+            ).all();
+
+            return new Response(JSON.stringify(recipes.results), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+        }
+    } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+    }
+}
+
+/**
  * OPTIONS 요청 처리 (CORS preflight)
  */
 export async function onRequestOptions() {
