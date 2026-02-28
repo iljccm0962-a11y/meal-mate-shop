@@ -68,46 +68,89 @@
     </div>
 
     <script>
-        const extractBtns = document.querySelectorAll('button.btn-ai.bg-red-500');
-        const urlInput = document.querySelector('input[type="text"]');
+        // 페이지가 완전히 로드된 후 실행되도록 보장
+        window.onload = function() {
+            const extractBtn = document.getElementById('extract-btn');
+            const urlInput = document.querySelector('input[type="text"]');
 
-        // AI 시뮬레이션 클릭 핸들러 함수
-        function handleExtractClick() {
-            const url = urlInput.value.trim();
+            if (extractBtn) {
+                extractBtn.addEventListener('click', function() {
+                    const url = urlInput.value.trim();
+                    
+                    if (!url) {
+                        alert("인스타그램 주소를 입력해주세요!");
+                        return;
+                    }
 
-            if (!url) {
-                alert("인스타그램 주소를 입력해주세요!");
-                return;
+                    // 1. 버튼 텍스트와 스타일 즉시 변경
+                    console.log("분석 프로세스 시작..."); 
+                    this.innerText = "⏳ AI 분석 중... 잠시만 기다려주세요";
+                    this.style.backgroundColor = "#4b5563"; // 회색으로 변경
+                    this.style.cursor = "not-allowed";
+                    this.disabled = true;
+
+                    // 2. 가짜 데이터 로딩 (2초 뒤)
+                    const self = this;
+                    setTimeout(() => {
+                        const titleInput = document.querySelectorAll('input[type="text"]')[1];
+                        const ingredientTextarea = document.querySelector('textarea');
+
+                        if(titleInput) titleInput.value = "초간단 10분 김치찜 (추출 완료)";
+                        if(ingredientTextarea) ingredientTextarea.value = "돼지고기 300g, 묵은지 1/4포기, 양파 1/2개";
+
+                        // 3. 버튼 원래대로 복구
+                        self.innerText = "AI 가공 및 레시피 추출 시작";
+                        self.style.backgroundColor = ""; // 원래 색상(Red)으로 복구
+                        self.style.cursor = "pointer";
+                        self.disabled = false;
+                        
+                        alert("AI가 레시피를 성공적으로 뽑아냈습니다!");
+                    }, 2000);
+                });
+
+                // 첫 번째 일반 버튼에도 같은 이벤트 연결
+                const allExtractBtns = document.querySelectorAll('button.btn-ai.bg-red-500');
+                allExtractBtns.forEach(btn => {
+                    if (btn !== extractBtn) {
+                        btn.addEventListener('click', extractBtn.onclick || function() {
+                            // extract-btn의 클릭 이벤트 핸들러와 동일하게 실행
+                            const url = urlInput.value.trim();
+                            
+                            if (!url) {
+                                alert("인스타그램 주소를 입력해주세요!");
+                                return;
+                            }
+
+                            console.log("분석 프로세스 시작..."); 
+                            this.innerText = "⏳ AI 분석 중... 잠시만 기다려주세요";
+                            this.style.backgroundColor = "#4b5563";
+                            this.style.cursor = "not-allowed";
+                            this.disabled = true;
+
+                            const self = this;
+                            setTimeout(() => {
+                                const titleInput = document.querySelectorAll('input[type="text"]')[1];
+                                const ingredientTextarea = document.querySelector('textarea');
+
+                                if(titleInput) titleInput.value = "초간단 10분 김치찜 (추출 완료)";
+                                if(ingredientTextarea) ingredientTextarea.value = "돼지고기 300g, 묵은지 1/4포기, 양파 1/2개";
+
+                                self.innerText = "AI 가공 및 레시피 추출 시작";
+                                self.style.backgroundColor = "";
+                                self.style.cursor = "pointer";
+                                self.disabled = false;
+                                
+                                alert("AI가 레시피를 성공적으로 뽑아냈습니다!");
+                            }, 2000);
+                        });
+                    }
+                });
+            } else {
+                console.error("오류: 'extract-btn' 아이디를 가진 버튼을 찾을 수 없습니다.");
             }
+        };
 
-            console.log("분석 시작 버튼 클릭됨!");
-
-            this.innerText = "⏳ AI 분석 중... 잠시만 기다려주세요";
-            this.classList.remove('bg-red-500');
-            this.classList.add('bg-gray-500');
-            this.disabled = true;
-
-            const self = this;
-            setTimeout(() => {
-                alert("분석이 완료되었습니다!");
-                self.innerText = "AI 가공 및 레시피 추출 시작";
-                self.classList.remove('bg-gray-500');
-                self.classList.add('bg-red-500');
-                self.disabled = false;
-
-                document.querySelector('textarea').value = "추출된 레시피: " + url;
-            }, 2000);
-        }
-
-        // 모든 추출 버튼에 클릭 이벤트 연결
-        extractBtns.forEach(btn => {
-            btn.addEventListener('click', handleExtractClick);
-        });
-
-        if (extractBtns.length === 0) {
-            console.error("추출 버튼을 찾을 수 없습니다.");
-        }
-
+        // 배포 버튼 이벤트
         const publishBtn = document.querySelector('button.bg-pink-500');
 
         publishBtn.addEventListener('click', async () => {
