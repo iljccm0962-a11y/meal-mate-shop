@@ -41,10 +41,16 @@
                 </div>
                 
                 <label>요리 제목</label>
-                <input type="text" value="초간단 10분 김치찜">
+                <input type="text" id="recipe-title" value="초간단 10분 김치찜">
+                
+                <label>카테고리</label>
+                <input type="text" id="category" placeholder="예: 한식, 중식, 양식, 디저트 등">
+                
+                <label>요리 설명</label>
+                <textarea id="description" rows="3" placeholder="요리에 대한 간단한 설명을 입력하세요"></textarea>
                 
                 <label>추출된 재료 (쇼핑몰 연동용)</label>
-                <textarea rows="4">돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술</textarea>
+                <textarea rows="4" id="ingredients-text">돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술</textarea>
                 
                 <div style="display: flex; gap: 20px;">
                     <div style="flex: 1; background: #000; height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
@@ -55,7 +61,7 @@
                     </div>
                 </div>
                 
-                <button class="btn-ai" style="margin-top: 20px; width: 100%;">MealMate Shop에 최종 배포</button>
+                <button class="btn-ai" style="margin-top: 20px; width: 100%;" onclick="publishRecipe()">MealMate Shop에 최종 배포</button>
             </div>
         </div>
     </div>
@@ -65,6 +71,44 @@
             const result = document.getElementById('processingResult');
             result.style.display = 'block';
             // 실제 구현 시에는 fetch()를 통해 Backend(Node.js/Python) AI API를 호출합니다.
+        }
+
+        async function publishRecipe() {
+            // 1. 화면에 입력된 데이터 가져오기
+            const title = document.getElementById('recipe-title').value;
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value;
+            const ingredients = document.getElementById('ingredients-text').value;
+
+            if (!title || !ingredients) {
+                alert("요리 제목과 재료를 확인해 주세요!");
+                return;
+            }
+
+            // 2. 서버(Functions API)로 전송
+            try {
+                const response = await fetch('/api/recipes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        category: category || '추천',
+                        description: description || 'MealMate 가공본 레시피',
+                        ingredients: ingredients
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("🚀 MealMate Shop에 성공적으로 배포되었습니다! ID: " + result.id);
+                } else {
+                    alert("배포 실패: " + result.error);
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                alert("서버 연결에 실패했습니다.");
+            }
         }
     </script>
 </body>

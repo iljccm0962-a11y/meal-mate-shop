@@ -12,8 +12,11 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- 요리 레시피 테이블
 CREATE TABLE IF NOT EXISTS recipes (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    name TEXT,
+    category TEXT,
+    description TEXT,
     ingredients TEXT,  -- JSON 형식으로 저장
     instructions TEXT,
     image_url TEXT,
@@ -21,6 +24,16 @@ CREATE TABLE IF NOT EXISTS recipes (
     difficulty TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 재료 테이블 (개별 재료 관리)
+CREATE TABLE IF NOT EXISTS ingredients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    lowest_price REAL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (recipe_id) REFERENCES recipes(id)
 );
 
 -- 재료 매칭 테이블
@@ -76,6 +89,8 @@ CREATE TABLE IF NOT EXISTS published_content (
 
 -- 인덱스 생성
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_recipes_category ON recipes(category);
+CREATE INDEX IF NOT EXISTS idx_ingredients_recipe_id ON ingredients(recipe_id);
 CREATE INDEX IF NOT EXISTS idx_carts_user_id ON carts(user_id);
 CREATE INDEX IF NOT EXISTS idx_carts_status ON carts(status);
 CREATE INDEX IF NOT EXISTS idx_search_results_user_id ON search_results(user_id);
