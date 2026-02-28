@@ -3,11 +3,6 @@ name = "meal-mate-shop"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "public"
 
-[build]
-command = "echo 'Build complete'"
-cwd = "."
-watch_paths = ["public/**/*"]
-
 [env.production]
 name = "meal-mate-shop"
 
