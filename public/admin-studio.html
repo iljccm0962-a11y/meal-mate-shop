@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 
-                <button class="btn-ai" style="margin-top: 20px; width: 100%;" onclick="publishRecipe()">MealMate Shop에 최종 배포</button>
+                <button class="btn-ai bg-pink-500" style="margin-top: 20px; width: 100%;">MealMate Shop에 최종 배포</button>
             </div>
         </div>
     </div>
@@ -73,43 +73,43 @@
             // 실제 구현 시에는 fetch()를 통해 Backend(Node.js/Python) AI API를 호출합니다.
         }
 
-        async function publishRecipe() {
-            // 1. 화면에 입력된 데이터 가져오기
-            const title = document.getElementById('recipe-title').value;
-            const category = document.getElementById('category').value;
-            const description = document.getElementById('description').value;
-            const ingredients = document.getElementById('ingredients-text').value;
+        document.querySelector('button.bg-pink-500').addEventListener('click', async () => {
+            // 1. 입력창에서 데이터 가져오기
+            const title = document.querySelector('input[type="text"]').value;
+            const ingredients = document.querySelector('textarea').value;
 
             if (!title || !ingredients) {
-                alert("요리 제목과 재료를 확인해 주세요!");
+                alert("요리 제목과 재료를 모두 입력해주세요!");
                 return;
             }
 
-            // 2. 서버(Functions API)로 전송
+            // 2. 서버 API(/api/publish)로 데이터 보내기
             try {
-                const response = await fetch('/api/recipes', {
+                const response = await fetch('/api/publish', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         title: title,
-                        category: category || '추천',
-                        description: description || 'MealMate 가공본 레시피',
-                        ingredients: ingredients
+                        description: ingredients,
+                        category: 'MealMate 추천'
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    alert("🚀 MealMate Shop에 성공적으로 배포되었습니다! ID: " + result.id);
+                    alert("🚀 MealMate Shop에 성공적으로 배포되었습니다!");
+                    // 입력창 비우기
+                    document.querySelector('input[type="text"]').value = '';
+                    document.querySelector('textarea').value = '';
                 } else {
                     alert("배포 실패: " + result.error);
                 }
             } catch (err) {
-                console.error("Error:", err);
-                alert("서버 연결에 실패했습니다.");
+                console.error("연결 오류:", err);
+                alert("서버와 연결할 수 없습니다. 다시 시도해주세요.");
             }
-        }
+        });
     </script>
 </body>
 </html>
