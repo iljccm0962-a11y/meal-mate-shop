@@ -1,18 +1,11 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "meal-mate-shop"
-compatibility_date = "2024-01-01"
+compatibility_date = "2026-02-28"
 pages_build_output_dir = "public"
 
+# [env.production]을 명시하여 실서버 환경에서 DB를 찾게 합니다.
+[env.production]
 d1_databases = [
   { binding = "DB", database_name = "meal-mate-db", database_id = "d8beed67-f108-4a73-b184-815fc0fb1100" }
 ]
-
-[env.production]
-binding = "DB"
-database_name = "meal-mate-db"
-database_id = "d8beed67-f108-4a73-b184-815fc0fb1100"
-
-[dev]
-port = 3000
-local_protocol = "http"
 
