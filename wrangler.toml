@@ -6,4 +6,4 @@ pages_build_output_dir = "./public" # 이 경로가 public이어야 html들이 �
 [[d1_databases]]
 binding = "DB" # 코드 내에서 데이터베이스에 접근할 때 쓰는 이름
 database_name = "meal-mate-db"
-database_id = "여러분의-D1-ID-복사해서-여기에-넣으세요"
+database_id = "d8beed67-f108-4a73-b184-815fc0fb1100"
