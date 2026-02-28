@@ -28,6 +28,7 @@
         <div class="card">
             <h3>🔗 외부 영상 소스 입력</h3>
             <input type="text" id="sourceUrl" placeholder="Instagram Reels 또는 Shorts URL을 붙여넣으세요">
+            <button class="btn-ai bg-red-500">AI 가공 및 레시피 추출 시작</button>
             <button id="extract-btn" class="btn-ai bg-red-500">AI 가공 및 레시피 추출 시작</button>
         </div>
 
@@ -67,37 +68,44 @@
     </div>
 
     <script>
-        const extractBtn = document.getElementById('extract-btn');
+        const extractBtns = document.querySelectorAll('button.btn-ai.bg-red-500');
         const urlInput = document.querySelector('input[type="text"]');
 
-        if (extractBtn) {
-            extractBtn.addEventListener('click', function() {
-                const url = urlInput.value.trim();
+        // AI 시뮬레이션 클릭 핸들러 함수
+        function handleExtractClick() {
+            const url = urlInput.value.trim();
 
-                if (!url) {
-                    alert("인스타그램 주소를 입력해주세요!");
-                    return;
-                }
+            if (!url) {
+                alert("인스타그램 주소를 입력해주세요!");
+                return;
+            }
 
-                console.log("분석 시작 버튼 클릭됨!");
+            console.log("분석 시작 버튼 클릭됨!");
 
-                this.innerText = "⏳ AI 분석 중... 잠시만 기다려주세요";
-                this.classList.remove('bg-red-500');
-                this.classList.add('bg-gray-500');
-                this.disabled = true;
+            this.innerText = "⏳ AI 분석 중... 잠시만 기다려주세요";
+            this.classList.remove('bg-red-500');
+            this.classList.add('bg-gray-500');
+            this.disabled = true;
 
-                setTimeout(() => {
-                    alert("분석이 완료되었습니다!");
-                    this.innerText = "AI 가공 및 레시피 추출 시작";
-                    this.classList.remove('bg-gray-500');
-                    this.classList.add('bg-red-500');
-                    this.disabled = false;
+            const self = this;
+            setTimeout(() => {
+                alert("분석이 완료되었습니다!");
+                self.innerText = "AI 가공 및 레시피 추출 시작";
+                self.classList.remove('bg-gray-500');
+                self.classList.add('bg-red-500');
+                self.disabled = false;
 
-                    document.querySelector('textarea').value = "추출된 레시피: " + url;
-                }, 2000);
-            });
-        } else {
-            console.error("버튼을 찾을 수 없습니다. id='extract-btn'을 확인하세요.");
+                document.querySelector('textarea').value = "추출된 레시피: " + url;
+            }, 2000);
+        }
+
+        // 모든 추출 버튼에 클릭 이벤트 연결
+        extractBtns.forEach(btn => {
+            btn.addEventListener('click', handleExtractClick);
+        });
+
+        if (extractBtns.length === 0) {
+            console.error("추출 버튼을 찾을 수 없습니다.");
         }
 
         const publishBtn = document.querySelector('button.bg-pink-500');
