@@ -3,15 +3,11 @@ name = "meal-mate-shop"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "public"
 
+d1_databases = [
+  { binding = "DB", database_name = "meal-mate-db", database_id = "d8beed67-f108-4a73-b184-815fc0fb1100" }
+]
+
 [env.production]
-name = "meal-mate-shop"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "meal-mate-db"
-database_id = "d8beed67-f108-4a73-b184-815fc0fb1100"
-
-[env.production.d1_databases]
 binding = "DB"
 database_name = "meal-mate-db"
 database_id = "d8beed67-f108-4a73-b184-815fc0fb1100"
