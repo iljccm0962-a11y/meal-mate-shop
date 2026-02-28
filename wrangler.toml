@@ -1,9 +1,17 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "meal-mate-shop"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "./public" # 이 경로가 public이어야 html들이 배포됩니다.
+pages_build_output_dir = "public"
+
+[build]
+command = "echo 'Build complete'"
+cwd = "."
+watch_paths = ["public/**/*"]
+
+[env.production]
+name = "meal-mate-shop"
 
 [[d1_databases]]
-binding = "DB" # 코드 내에서 데이터베이스에 접근할 때 쓰는 이름
+binding = "DB"
 database_name = "meal-mate-db"
 database_id = "d8beed67-f108-4a73-b184-815fc0fb1100"
