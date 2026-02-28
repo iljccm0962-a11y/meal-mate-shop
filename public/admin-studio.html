@@ -67,38 +67,35 @@
     </div>
 
     <script>
-        // 1. 추출 버튼과 입력 필드들 가져오기
         const extractBtn = document.querySelector('button.bg-red-500'); // 추출 시작 버튼
-        const urlInput = document.querySelector('input[type="text"]'); // 외부 영상 소스 입력창
-        const titleInput = document.getElementById('recipe-title'); // 요리 제목 입력창
-        const ingredientTextarea = document.getElementById('ingredients-text'); // 재료 입력창
+        const urlInput = document.getElementById('sourceUrl'); // 주소창
+        const titleInput = document.getElementById('recipe-title'); // 제목창
+        const ingredientTextarea = document.getElementById('ingredients-text'); // 재료창
 
         extractBtn.addEventListener('click', () => {
-            const url = urlInput.value;
-            
-            if (!url.includes('instagram.com')) {
-                alert("올바른 인스타그램 링크를 입력해주세요!");
+            const url = urlInput.value.trim();
+
+            if (!url || !url.includes('instagram.com')) {
+                alert("인스타그램 주소를 정확히 입력해주세요!");
                 return;
             }
 
-            // AI 분석 중인 것처럼 보이게 버튼 상태 변경
-            extractBtn.innerText = "✨ AI 분석 중...";
+            // AI 작동 애니메이션 시뮬레이션
+            extractBtn.innerText = "🔍 AI 분석 중...";
             extractBtn.disabled = true;
 
-            // 결과 영역 표시
             const result = document.getElementById('processingResult');
             result.style.display = 'block';
 
-            // 2초 뒤에 자동으로 레시피가 채워지도록 설정 (AI 시뮬레이션)
             setTimeout(() => {
-                titleInput.value = "초간단 10분 김치찜";
-                ingredientTextarea.value = "돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술";
-                
+                // 실제로는 여기서 AI API를 호출해야 함
+                titleInput.value = "인스타그램 인기 릴스 레시피";
+                ingredientTextarea.value = "입력하신 주소(" + url.substring(0, 20) + "...)에서 추출한 재료 목록: \n- 삼겹살 300g\n- 김치 1/4포기\n- 비법 양념장";
+
                 extractBtn.innerText = "AI 가공 및 레시피 추출 시작";
                 extractBtn.disabled = false;
-                
-                alert("AI 분석이 완료되었습니다! 내용을 확인하고 최종 배포를 눌러주세요.");
-            }, 2000);
+                alert("레시피 추출 완료! [최종 배포]를 눌러 DB에 저장하세요.");
+            }, 1500);
         });
 
         const publishBtn = document.querySelector('button.bg-pink-500');
