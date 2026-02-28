@@ -32,26 +32,34 @@
             <button id="extract-btn" class="btn-ai bg-red-500">AI 가공 및 레시피 추출 시작</button>
         </div>
 
-        <div id="processingResult" style="display:none;">
+        <div id="result-section" class="mt-8 bg-gray-900" style="display:none; padding: 25px; border-radius: 15px; border: 1px solid #333;">
             <div class="card">
-                <h3>🔍 AI 분석 결과 (자동 추출됨)</h3>
+                <h3 class="text-xl font-bold mb-4">🔍 AI 분석 결과 (자동 추출됨)</h3>
                 <div style="margin-bottom: 15px;">
                     <span class="status-tag active">저작권 세탁 완료</span>
                     <span class="status-tag active">나레이션 생성 완료</span>
                     <span class="status-tag">쇼핑몰 상품 매칭 중...</span>
                 </div>
                 
-                <label>요리 제목</label>
-                <input type="text" id="recipe-title" value="초간단 10분 김치찜">
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">요리 제목</label>
+                    <input type="text" id="recipe-title" class="w-full bg-gray-800" value="초간단 10분 김치찜">
+                </div>
                 
-                <label>카테고리</label>
-                <input type="text" id="category" placeholder="예: 한식, 중식, 양식, 디저트 등">
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">카테고리</label>
+                    <input type="text" id="category" class="w-full bg-gray-800" placeholder="예: 한식, 중식, 양식, 디저트 등">
+                </div>
                 
-                <label>요리 설명</label>
-                <textarea id="description" rows="3" placeholder="요리에 대한 간단한 설명을 입력하세요"></textarea>
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">요리 설명</label>
+                    <textarea id="description" class="w-full bg-gray-800" rows="3" placeholder="요리에 대한 간단한 설명을 입력하세요"></textarea>
+                </div>
                 
-                <label>추출된 재료 (쇼핑몰 연동용)</label>
-                <textarea rows="4" id="ingredients-text">돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술</textarea>
+                <div class="mb-4">
+                    <label class="block text-sm mb-1">추출된 재료 (쇼핑몰 연동용)</label>
+                    <textarea rows="4" id="recipe-ingredients" class="w-full bg-gray-800">돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술</textarea>
+                </div>
                 
                 <div style="display: flex; gap: 20px;">
                     <div style="flex: 1; background: #000; height: 200px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
@@ -186,7 +194,7 @@
                     alert("🚀 MealMate Shop에 성공적으로 배포되었습니다!");
                     // 입력창 초기화
                     document.getElementById('recipe-title').value = "초간단 10분 김치찜";
-                    document.getElementById('ingredients-text').value = "돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술";
+                    document.getElementById('recipe-ingredients').value = "돼지고기 앞다리살 300g, 묵은지 1/4포기, 대파 1대, 설탕 1큰술";
                 } else {
                     alert("배포 실패: " + (result.error || "알 수 없는 오류"));
                 }
